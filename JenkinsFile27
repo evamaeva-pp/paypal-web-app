@@ -1,11 +1,12 @@
+
 //scripted pipeline
 node{
- def MHD = tool name: "maven3.8.4"
+ def MHD = tool name: Maven 3.8.5"
     stage('1.Initiation'){
     sh "echo Start of td deployment"
     }
     stage('2.CloneCode'){
-    git branch: 'stage', credentialsId: 'GitHubCredentials', url: 'https://github.com/LandmakTechnology/web-app'
+    git credentialsId: 'GitHub-CREDENTIALS', url: 'https://github.com/evamaeva-pp/paypal-web-app.git'
     }
     stage('3.buildMaven'){
     sh "${MHD}/bin/mvn package"
@@ -17,22 +18,20 @@ node{
     //sh "${MHD}/bin/mvn deploy"
     }
     stage('6.Deploy2Stage'){
-    sshagent(['32d5fb4f-d92f-4a10-9f12-2738eab55fcc']) {
+   sshagent(['SSH_Credentials']) {
     sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@172.31.15.31:/opt/tomcat9/webapps/app"
-}
-    
-} 
-    }
+    // some block
+                         }
+            }
     stage('7.Approval'){
-    timeout(time:5, unit:'DAYS'){
+    timeout(time:5, unit:'HOURS'){
  			input message: 'Approval for production'
-    
     }
     stage('8.deployToProd'){
-    sshagent(['32d5fb4f-d92f-4a10-9f12-2738eab55fcc']) {
-    sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@172.31.15.31:/opt/tomcat9/webapps/"
+  sshagent(['SSH_Credentials']) {
+    sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@172.31.15.31:/opt/tomcat9/webapps/app"
+    // some block
 }
     
     }
 }
-
