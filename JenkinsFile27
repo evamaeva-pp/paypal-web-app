@@ -1,7 +1,7 @@
 
 //scripted pipeline
 node{
- def MHD = tool name: Maven 3.8.5"
+ def MHD = tool name: "Maven 3.8.5"
     stage('1.Initiation'){
     sh "echo Start of td deployment"
     }
