@@ -1,0 +1,44 @@
+	node{
+	  def mavenHome = tool name: 'Maven 3.8.5'
+	  stage('1.Clone'){
+	         git branch: 'master', credentialsId: 'GitHub-CREDENTIALS', url: 'https://github.com/evamaeva-pp/paypal-web-app'
+	  }
+	  stage('2.MavenBuild'){
+	    sh "${mavenHome}/bin/mvn clean package"
+	   // bat 'mvn package'
+	  }
+	      stage('3.CodeQuality'){
+	    sh "${mavenHome}/bin/mvn sonar:sonar"
+	  }
+	    stage('4.UploadArtifacts'){
+	  sh "${mavenHome}/bin/mvn deploy"
+            //nexusArtifactUploader artifacts: [[artifactId: 'maven-web-application', classifier: '', file: '/var/lib/jenkins/workspace/fintech-master/target/web-app.war', type: 'war']], credentialsId: 'NEXUS_Credentials', groupId: 'com.mt', nexusUrl: '3.94.206.105:8081', nexusVersion: 'nexus2', protocol: 'http', repository: 'http://3.94.206.105:8888/repository/paypal-snapshots/', version: '0.0.2-SNAPSHOT'
+	 }
+	        stage('5.Deploy2dev'){
+	    deploy adapters: [tomcat9(credentialsId: 'Tomcat-Credentials', path: '', url: 'http://34.238.84.106:7000/')], contextPath: null, war: 'target/*war'
+	}
+	        stage('7.Deploy2Uat'){
+	            sshagent(['SSH_Tomcat_Credentials']) {
+	    sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@34.238.84.106:/opt/tomcat9/webapps/Uatapp.war"
+	        //deploy adapters: [tomcat9(credentialsId: 'Tomcat-Credentials', path: '', url: 'http://54.86.234.113:7000/')], contextPath: null, war: 'target/*war'
+	            }
+	        }
+		stage('8.Approval'){
+		 timeout(time:5, unit:'HOURS'){
+		 	input message: 'Approval for production'
+		    }
+		}
+		stage('9.Deploy2PROD'){
+		           sshagent(['SSH_Tomcat2_Credentials']) {
+	sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@3.92.227.122:/opt/tomcat9/webapps/Uatapp.war"
+		           //deploy adapters: [tomcat9(credentialsId: 'Tomcat-Credentials', path: '', url: 'http://54.86.234.113:7000/')], contextPath: null, war: 'target/*war'
+		         }
+		        }
+	        stage('10.EmailAlert'){
+	            emailext body: '''Hello Team, 
+	
+	Please review the build status below.
+	
+	Best Regards,''', subject: 'Build Status', to: 'maeva.mbongo001@gmail.com'
+	        }
+}
