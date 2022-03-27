@@ -1,0 +1,30 @@
+pipeline {
+       agent any
+       tools {
+           maven 'Maven 3.8.4'
+           
+       }
+       stages {
+           stage("Checkout Code") {
+               steps {
+                   git branch: 'master',
+                       url: "https://github.com/evamaeva-pp/paypal-web-app.git"
+               }
+           }
+           stage("Cleaning workspace") {
+               steps {
+                   sh "mvn clean"
+               }
+           }
+           stage("Running Testcase") {
+              steps {
+                   sh "mvn test"
+               }
+           }
+           stage("Packing Application") {
+               steps {
+                   sh "mvn package"
+               }
+           }
+       }
+ }
