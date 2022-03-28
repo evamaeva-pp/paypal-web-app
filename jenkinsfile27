@@ -15,12 +15,12 @@
             //nexusArtifactUploader artifacts: [[artifactId: 'maven-web-application', classifier: '', file: '/var/lib/jenkins/workspace/fintech-master/target/web-app.war', type: 'war']], credentialsId: 'NEXUS_Credentials', groupId: 'com.mt', nexusUrl: '3.94.206.105:8081', nexusVersion: 'nexus2', protocol: 'http', repository: 'http://3.94.206.105:8888/repository/paypal-snapshots/', version: '0.0.2-SNAPSHOT'
 	 }
 	        stage('5.Deploy2dev'){
-	    deploy adapters: [tomcat9(credentialsId: 'Tomcat-Credentials', path: '', url: 'http://54.236.75.60:7000/')], contextPath: null, war: 'target/*war'
+	    deploy adapters: [tomcat9(credentialsId: 'Tomcat-Credentials', path: '', url: 'http://52.206.219.143:7000/')], contextPath: null, war: 'target/*war'
 	}
 	        stage('7.Deploy2Uat'){
 	            sshagent(['SSH_Tomcat_Credentials']) {
-	    sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@54.236.75.60:/opt/tomcat9/webapps/Uatapp.war"
-	        //deploy adapters: [tomcat9(credentialsId: 'Tomcat-Credentials', path: '', url: 'http://54.86.234.113:7000/')], contextPath: null, war: 'target/*war'
+	    sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@44.203.3.130:/opt/tomcat9/webapps/Uatapp.war"
+	        //deploy adapters: [tomcat9(credentialsId: 'Tomcat-Credentials', path: '', url: 'http://44.203.3.130:7000/')], contextPath: null, war: 'target/*war'
 	            }
 	        }
 		stage('8.Approval'){
@@ -30,7 +30,7 @@
 		}
 		stage('9.Deploy2PROD'){
 		           sshagent(['SSH_Tomcat2_Credentials']) {
-	sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@52.90.241.94:/opt/tomcat9/webapps/Uatapp.war"
+	sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@107.21.159.160:/opt/tomcat9/webapps/Uatapp.war"
 		           //deploy adapters: [tomcat9(credentialsId: 'Tomcat-Credentials', path: '', url: 'http://54.86.234.113:7000/')], contextPath: null, war: 'target/*war'
 		         }
 		        }
@@ -39,6 +39,6 @@
 	
 	Please review the build status below.
 	
-	Best Regards,''', subject: 'Build Status', to: 'maeva.mbongo001@gmail.com'
+	Best Regards,''', subject: 'Build Status', to: 'maeva.mbongo001@gmail.com' 'maeva.mbongo.r@gmail.com'
 	        }
 }
