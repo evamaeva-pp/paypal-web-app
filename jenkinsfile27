@@ -30,7 +30,7 @@
 		}
 		stage('9.Deploy2PROD'){
 		           sshagent(['SSH_Tomcat2_Credentials']) {
-	sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@54.236.75.60:/opt/tomcat9/webapps/Uatapp.war"
+	sh "scp -o StrictHostKeyChecking=no target/*war ec2-user@52.90.241.94:/opt/tomcat9/webapps/Uatapp.war"
 		           //deploy adapters: [tomcat9(credentialsId: 'Tomcat-Credentials', path: '', url: 'http://54.86.234.113:7000/')], contextPath: null, war: 'target/*war'
 		         }
 		        }
