@@ -1,0 +1,64 @@
+pipeline {
+		agent any 
+		tools {
+		maven "maven3.8.5"
+				}
+		environment {     
+              DockerHub_Credentials= credentials('DOCKERHUB_CREDENTIALS')     
+}
+		stages{
+		stage('GitClone'){
+			steps{
+			echo 'cloning latest application version'
+		git branch: 'dev', credentialsId: 'GitHub-CREDENTIALS', url: 'https://github.com/evamaeva-pp/paypal-web-app.git'
+				}
+		}
+		stage('TestBuild'){
+			steps{
+				echo 'running unit testing'
+				sh "mvn clean"
+			    echo 'UnitTesting OK. creating packages'
+				sh "mvn package"
+				echo 'Artifacts created'
+				}
+		}
+		stage('CodeQuality'){
+			steps{
+				echo 'running CodeQuality Report'
+				sh "mvn sonar:sonar"
+				echo 'report complete'
+				}
+		}
+			stage('UploadArtifacts'){
+			steps{
+				echo 'Uploading Artifacts into Nexus'
+				sh "mvn deploy"
+				echo 'Artifacts uploaded to Nexus'
+				}
+		}
+			stage('PreDeployment'){
+			steps{
+			    echo 'creating Docker image'
+				sh "docker build -t evamaeva/paypal-web-app:1 . "
+				echo 'Docker image created'
+}
+}
+			stage('LoginToDockerHUb'){
+			    steps{
+			        echo 'Logging into DockerHub'
+			        sh 'echo $DockerHub_Credentials_PSW | sudo docker login -u $DockerHub_Credentials_USR --password-stdin'                		
+	                echo 'Login Completed'      
+				//withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_CREDENTIALS', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                //sh 'docker login -u $USERNAME -p $PASSWORD'
+                    echo 'uploading image into Docker Registry'
+                    sh "docker push evamaeva/paypal-web-app:1"
+                    echo 'Image upload complete'
+			}
+			}
+			stage('Message'){
+			steps{
+				echo 'CI Job successful'
+				}
+	}	
+}		
+}
