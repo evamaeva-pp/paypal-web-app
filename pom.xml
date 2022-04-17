@@ -96,13 +96,13 @@
 	    <repository>
 	      <id>nexus</id>
 	      <name>Landmark Technologies Releases Nexus Repository</name>
-	      <url>http:http://174.129.59.203:4000/repository/boa-bts/</url>
+	      <url>http://174.129.59.203:4000/repository/boa-bts/</url>
 	    </repository>
 	    
 	    <snapshotRepository>
 	      <id>nexus</id>
 	      <name>Landmark Technologies Snapshot Nexus Repository </name>
-	      <url>http:http://174.129.59.203:4000/repository/boa-bts-snapshot/</url>
+	      <url>http://174.129.59.203:4000/repository/boa-bts-snapshot/</url>
 	    </snapshotRepository>
 	    
 	</distributionManagement>
